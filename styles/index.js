@@ -1,35 +1,42 @@
-import {  PixelRatio } from 'react-native';
+import {  PixelRatio, Dimensions } from 'react-native';
 
 export function normalize(size) {
     return Math.round(PixelRatio.roundToNearestPixel(size))
 }
+export const {width : SCREEN_WIDTH} = Dimensions.get('window')
+export const {height : SCREEN_HEIGHT} = Dimensions.get('window')
 
 export const colors = {
     color_primary : '#2D79E6',
     text_primay : '#000',
     text_secondary : '#6a6a6a',
     bg_primagy :  '#fbfcfe',
-    header_prmiary : colors.color_primary,
+    header_prmiary : this.color_primary,
     header_secondary : '#053476'
+} 
+
+export const fonts = {
+    base : 'Rounded Mplus 1c',
 }
 
 export const text = {
-    base_font : {
-        fontFamily : 'Rounded Mplus 1c',
-    },
     h1 : {
-        fontFamily : text.base_font,
-        fontSize : normalize(21)
+       fontFamily: fonts.base,
+       fontSize : normalize(21)
     },
     text_primary : {
-        fontFamily : text.base_font,
+        fontFamily : fonts.base,
         fontSize : normalize(17),
-        color : colors.text_primary,
-        lineHeight : normalize(17)
+        color : colors.text_primary, // lineHeight : normalize(17)
     },
     h2 : {
-        fontFamily : text.base_font,
-        fontSize : normalize(17)
+        fontFamily : fonts.base,
+        fontSize : normalize(17),
+        color: colors.header_secondary
+    },
+    text_info : {
+        color : '#6A6A6A',
+        fontSize: normalize(16)
     }
 
 }
@@ -49,6 +56,9 @@ export default  Styles= {
         },
         align_items_center: {
             alignItems: 'center'
+        },
+        align_self_start: {
+            alignSelf: 'flex-start'
         },
         align_self_center: {
             alignSelf: 'center'
@@ -71,4 +81,7 @@ export default  Styles= {
         text_align_center: {
             textAlign : 'center'
         },
+        container : {
+            backgroundColor : '#FBFCFE',
+        }
 }
