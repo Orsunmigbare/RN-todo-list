@@ -48,14 +48,15 @@ function Task  ({subtasks,navigation, allSubtasks, createSubtask, updateSubtask}
     removeSubtask = (subtaskId)=>{
       deleteSubtask({taskId: routeParams.id, subtaskId})
     }
-    completeSubtask = (subtaskId,completed)=>{
-      updateSubtask({taskId: routeParams.id,subtaskId, completed: completed === 'true' ? 'false': 'true'})
+    completeSubtask = (id,completed)=>{
+      console.log(id, completed)
+      updateSubtask({taskId: routeParams.id,subtaskId : id , completed: completed === 'true' ? 'false': 'true'})
     }
     hideModal =  ()=>{
       setModalVisible(false);
     }
     renderTask = ({item})=>(
-        <TaskItem action={()=>{this.removeSubtask(item.id)}} id = {item.id} completed = {item.completed} task={item.title} toggleComplete = {this.completeSubtask}/>
+        <TaskItem action={()=>{this.removeSubtask(item.subtaskId)}} id = {item.subtaskId} completed = {item.completed} task={item.title} toggleComplete = {this.completeSubtask}/>
     )
         return (
           <>

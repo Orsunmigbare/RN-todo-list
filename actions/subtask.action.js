@@ -40,8 +40,8 @@ export const deleteSubtask = ({taskId,subtaskId}) => async dispatch => {
         const task_index = tasks.findIndex(tsk => tsk.id === taskId);
         let task =  tasks[task_index];
         let subtask_index= task.sub_task.findIndex(sbtsk => sbtsk.id = subtaskId)
-        task.subtask.splice(subtask_index,1)
-        tasks.splice('subtask', 1, tasks)
+        task.subtasks.splice(subtask_index,1)
+        tasks.splice(task_index, 1, tasks)
         await AsyncStorage.setItem('Tasks', JSON.stringify(tasks))
         dispatch({type: types.DELETE_SUBTASK_SUCCESS, payload: tasks.subtask})
     }catch(e){
@@ -50,21 +50,22 @@ export const deleteSubtask = ({taskId,subtaskId}) => async dispatch => {
 }
 
 export const updateSubtask = ({taskId,subtaskId, completed}) =>async dispatch =>{
+    console.log(taskId, subtaskId, completed)
  try{
     let tasks = await AsyncStorage.getItem('Tasks');
         tasks = JSON.parse(tasks)
         const task_index = tasks.findIndex(tsk => tsk.id === taskId);
         let task =  tasks[task_index];
-        console.log(subtaskId)
-        let subtask_index= task.subtasks.findIndex(sbtsk => sbtsk.id = subtaskId)
+        let subtask_index= task.subtasks.findIndex(sbtsk => sbtsk.subtaskId=== subtaskId)
+        console.log(subtask_index)
         let subtask = task.subtasks[subtask_index]
-        console.log(subtask)
         subtask.completed = completed;
-        task.subtask.splice(subtask_inedx, 1 ,subtask)
-        tasks.splice('subtask', 1, tasks)
+        console.log(subtask)
+        task.subtasks.splice(subtask_index, 1 ,subtask)
+        tasks.splice(task_index, 1, task)
         await AsyncStorage.setItem('Tasks', JSON.stringify(tasks))
         console.log('updated -->', subtask)
-        dispatch({type: types.DELETE_SUBTASK_SUCCESS, payload: subtasks})
+        dispatch({type: types.DELETE_SUBTASK_SUCCESS, payload: task.subtasks})
  } catch(e){
      console.log(e)
     dispatch({type: types.UPDATE_SUBTASKS_FAILURE, payload: 'error upsa subtask'})
