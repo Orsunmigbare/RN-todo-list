@@ -62,7 +62,7 @@ function Task  ({subtasks,navigation, allSubtasks, createSubtask, updateSubtask}
           <>
             <Modal title={'Title'} placeHolder = {'Add title'} visible={modalVisible} hide={this.hideModal} action = {this.addSubtask}  />
           <View style={[Styles.container]}> 
-           <Header icon title ={routeParams.title} icon click_handler = {()=>{this.props.navigation.goBack()}}/>
+           <Header icon title ={routeParams.title} icon click_handler = {()=>{navigation.goBack()}}/>
            <FlatList
             style = {[styles.container]}
             data={subtasks} 
