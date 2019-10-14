@@ -63,6 +63,9 @@ export default  Styles= {
         align_self_center: {
             alignSelf: 'center'
         },
+        align_self_end: {
+            alignSelf: 'flex-end'
+        },
         align_items_start: {
             align_items: 'flex-start'
         },

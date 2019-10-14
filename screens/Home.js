@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import {FlatList, StyleSheet, Image, View} from 'react-native'
+import React, { Component, useState , useEffect} from 'react';
+import {FlatList, StyleSheet, Image, View,TouchableNativeFeedback, TouchableWithoutFeedback} from 'react-native';
+import {connect} from 'react-redux';
+import {allTasks,createTask,updateTask,deleteTask} from '../actions/task.action'
 import Header from '../components/Header';
 import BaseItem from '../components/ListItem';
 import Styles from '../styles';
 import { Button, Text, Layout } from 'react-native-ui-kitten';
 import Modal from '../components/Modal'
+
 
 const DATA = [
     {
@@ -29,35 +32,52 @@ const DATA = [
 
 
 
-class Home extends Component {
-   state = {
-     modalVisible : false
-   }
+function Home ({tasks,createTask,allTasks,navigation}) {
+  const [modalVisible, setModalVisible] = useState(false)
+  const [data, setData] = useState()
+ 
+
+  useEffect(()=>{
+    if(tasks.length) return
+    allTasks()
+  })
     renderTask = ({item})=>(
-        <BaseItem  click_handler= {()=>{this.props.navigation.navigate('Task')}} checked= {item.completed} progress = {item.progress} task = {item.task} title={item.title}/>
+        <BaseItem  click_handler= {()=>{navigation.navigate('Task', {id: item.id, title: item.title})}} checked= {item.completed.toString()} progress = {item.progress} task = {item.title} />
     )
 
-    render() {
+    addTask= (title)=>{
+        createTask({title, id: Date.now().valueOf()})
+        setModalVisible(false)
+    }
+    hideModal =  ()=>{
+      setModalVisible(false);
+    }
+
         return (
-            <>
-            <Modal title={'Title'} placeHolder = {'Add title'} visible={this.state.modalVisible}/>
+            <> 
+            <Modal title={'Title'} placeHolder = {'Add title'} visible={modalVisible} hide={this.hideModal} action = {this.addTask}  />
             <View style={[Styles.container]}> 
            <Header base title ={'Tasks'} />
            <FlatList
-            data={DATA}
+            data={tasks}
             style = {[styles.container]}
             renderItem={this.renderTask}
             keyExtractor={item => item.id}
             />
            </View>
-           <Image 
-            style = {[styles.icon_add]}
+           {!modalVisible && < TouchableNativeFeedback
+           onPress = {()=>{setModalVisible(true)}}
+           style = {{backgroundColor: 'yellow'}}
+           >
+           <Image
+            style = {[styles.icon_add, {zIndex: 100}]}
             source = {require('../assets/images/icons/icon-add.png')}
             />
+            </ TouchableNativeFeedback>}
            </>
         );
-    }
-}
+ }
+
 
 const styles = StyleSheet.create({
     container : {
@@ -72,4 +92,16 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     }
 })
-export default Home;
+
+const mapStateToProps = state => {
+ return {tasks: state.task.tasks.reverse()}
+}
+export default  connect (
+  mapStateToProps,
+  {
+    allTasks,
+    createTask,
+    updateTask,
+    deleteTask
+  }
+)(Home);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image ,StyleSheet} from 'react-native';
 import Styles, {text, colors, normalize} from '../styles'
-import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 class BaseItem extends Component {
     render() {
         let { task, progress, completed, click_handler } = this.props;
@@ -24,25 +24,32 @@ class BaseItem extends Component {
     }
 }
 
-export const TaskItem = ({ task, completed }) => (
+export const TaskItem = ({ task, completed , toggleComplete, id}) => (
+    <TouchableNativeFeedback onPress = {()=>{console.log('pressed',completed) ; toggleComplete(id,completed)}}>
     <View style = {[Styles.flex_row, Styles.justify_content_start, Styles.align_items_center, styles.list_item]}>
+        
        <View style={[styles.check_icon_container, {position: 'absolute', left: normalize(15)}]}>
-                {/* <Image  style={[styles.check_icon]} source={require('../assets/images/icons/checked.png')} /> */}
+{ completed === 'true' ?  <Image  style={[styles.check_icon]} source={require('../assets/images/icons/checked.png')} /> : null}
+
                 </View>
+              
         <Text style={[text.text_primary,Styles.text_align_center, {flex: 1}]}>
             {task}
         </Text>
     </View>
+    </TouchableNativeFeedback>
 )
 
 
-export const AddSubtask = () => (
+export const AddSubtask = ({action}) => (
+    <TouchableNativeFeedback onPress={action}>
     <View style = {[Styles.flex_row, Styles.justify_content_start, Styles.align_items_center, styles.list_item, styles.add_subtask]}>
                 <Image  style={[styles.add_subtask_icon]} source={require('../assets/images/icons/info-add.png')} />
                 <Text style={[text.text_info]}>
                     Add Subtask
                 </Text>
     </View>
+    </TouchableNativeFeedback>
 )
 
 

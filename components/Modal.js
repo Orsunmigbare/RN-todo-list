@@ -1,17 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {View, TextInput, Text, StyleSheet, Image, KeyboardAvoidingView} from 'react-native'
 import Styles, {text, colors, normalize, SCREEN_WIDTH, fonts} from '../styles';
-import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 class Modal extends Component {
+    state = {
+        title : ''
+    }
+    setTitle = (title)=>{
+        this.setState({title})
+    }
     render() {
-        let {title,visible} = this.props;
+        let {title,visible, hide, action} = this.props;
+
         return (
-           <KeyboardAvoidingView behavior={'padding'} style={[styles.modal, Styles.justify_content_center, Styles.align_items_center,  {opacity: visible ? 1: 0, display: visible ? 'flex': 'none'}]}>
+          
+           <KeyboardAvoidingView behavior={'padding'} style={[styles.modal, Styles.justify_content_center, Styles.align_items_center,  {opacity: visible ? 1: 0, display: visible ? 'flex': 'none' }]}>
                <View style={[styles.modal_content, Styles.align_self_center, Styles.justify_content_space_between,]}> 
                    <Text style={[text.h2]}>{title}</Text>
-                   <Input />
-                   <AddBtn />
+                   <Input setTitle = {this.setTitle}/>
+                   <AddBtn hide = {hide} action={action} title={this.state.title}/>
                </View>
            </KeyboardAvoidingView>
         );
@@ -19,17 +27,20 @@ class Modal extends Component {
 }
 
 
-const Input = ()=>(
+const Input = ({setTitle})=>(
     <View >
     <TextInput 
     style = {[text.text_primary, styles.modal_input]}
+    onChangeText = {(e)=>{setTitle(e)}}
     />
     <View style={[styles.input_underline]}/> 
     </View>
 )
 
-const AddBtn = ()=>(
-    <TouchableNativeFeedback bor>
+const AddBtn = ({hide,action,title})=>(
+
+    <View style={[Styles.flex_row ,Styles.justify_content_space_between, Styles.align_items_center]}>
+    <TouchableNativeFeedback onPress = {()=>{action(title)}}>
     <View style={[Styles.flex_row, styles.modal_btn, Styles.align_self_center, Styles.align_items_center]}>
         <Image 
         source = {require('../assets/images/icons/icon-add-light.png')}
@@ -38,6 +49,10 @@ const AddBtn = ()=>(
         <Text style={[styles.modal_btn_text]}>  Add </Text>
     </View>
     </TouchableNativeFeedback>
+    <TouchableWithoutFeedback onPress={hide}>
+       <Text style={[text.text_info, {color: '#000', marginTop: 27}]}> Cancel </Text> 
+    </TouchableWithoutFeedback>
+    </View>
 )
 
 const styles = StyleSheet.create({

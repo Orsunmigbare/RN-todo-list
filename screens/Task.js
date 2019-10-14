@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import {FlatList, StyleSheet, View} from 'react-native'
+import React, { Component ,useState, useEffect} from 'react';
+import {FlatList, StyleSheet, View} from 'react-native';
+import {connect} from 'react-redux';
 import Header from '../components/Header';
+import {allSubtasks,createSubtask,updateSubtask,deleteSubtask} from '../actions/subtask.action'
 import  { TaskItem, AddSubtask } from '../components/ListItem';
 import Styles from '../styles';
+import Modal from '../components/Modal'
 
 const DATA = [
     {
@@ -23,27 +26,54 @@ const DATA = [
   ];
 
 
-class Home extends Component {
-    
-    renderTask = ({item})=>(
-        <TaskItem  task={item.title}/>
-    )
+function Task  ({subtasks,navigation, allSubtasks, createSubtask, updateSubtask}) {
+   const [modalVisible, setModalVisible] = useState(false)
+   const [routeParams,setParams] = useState({id: '', title: ''})
 
-    render() {
+    useEffect(()=>{
+      console.log(subtasks)
+      if (routeParams.id) return
+       let id = navigation.getParam('id'),
+      title = navigation.getParam('title')
+      allSubtasks(id)
+      setParams({id,title})
+      
+    })
+
+  
+    addSubtask = (title)=>{
+      createSubtask({taskId: routeParams.id,title,completed: 'false', subtaskId: Date.now().valueOf()})
+      setModalVisible(false)
+    }
+    removeSubtask = (subtaskId)=>{
+      deleteSubtask({taskId: routeParams.id, subtaskId})
+    }
+    completeSubtask = (subtaskId,completed)=>{
+      updateSubtask({taskId: routeParams.id,subtaskId, completed: completed === 'true' ? 'false': 'true'})
+    }
+    hideModal =  ()=>{
+      setModalVisible(false);
+    }
+    renderTask = ({item})=>(
+        <TaskItem action={()=>{this.removeSubtask(item.id)}} id = {item.id} completed = {item.completed} task={item.title} toggleComplete = {this.completeSubtask}/>
+    )
         return (
+          <>
+            <Modal title={'Title'} placeHolder = {'Add title'} visible={modalVisible} hide={this.hideModal} action = {this.addSubtask}  />
           <View style={[Styles.container]}> 
-           <Header icon title ={'First Item'} icon click_handler = {()=>{this.props.navigation.goBack()}}/>
+           <Header icon title ={routeParams.title} icon click_handler = {()=>{this.props.navigation.goBack()}}/>
            <FlatList
             style = {[styles.container]}
-            data={DATA}
+            data={subtasks} 
             renderItem={this.renderTask}
             keyExtractor={item => item.id}
             />
-            <AddSubtask />
+            <AddSubtask action = {()=>{setModalVisible(true)}}/>
            </View>
+           </>
         );
     }
-}
+
 
 const styles = StyleSheet.create({
     container : {
@@ -51,4 +81,15 @@ const styles = StyleSheet.create({
         
     }
 })
-export default Home;
+const mapStateToProps = state => {
+  return {subtasks: state.subtask.subtasks}
+ }
+ export default  connect (
+   mapStateToProps,
+   {
+     allSubtasks,
+     createSubtask,
+     updateSubtask,
+     deleteSubtask
+   }
+ )(Task);

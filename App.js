@@ -1,6 +1,8 @@
 import React, {useState,useEffect} from 'react';
 import MainNavigator from './screens/mainNavigator';
 import * as Font from 'expo-font'
+import {Provider} from 'react-redux';
+import {store} from './store'
 
 export default function App() {
   const [appReady, setAppReady]  = useState(false)
@@ -23,7 +25,10 @@ export default function App() {
   })
   
   return (
-    appReady ? <MainNavigator /> : null
+    appReady ? <Provider store={store}> 
+    <MainNavigator /> 
+    </Provider> 
+    : null
   );
 }
 
